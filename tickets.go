@@ -26,8 +26,8 @@ type ticketManager struct {
 }
 
 type TicketResults struct {
-	next    string
-	Results TicketSlice
+	NextURL string      `json:"next_url"`
+	Results TicketSlice `json:"results"`
 	client  *ApiClient
 }
 
@@ -241,7 +241,7 @@ func (manager ticketManager) All() (TicketResults, error) {
 	return TicketResults{
 		Results: output,
 		client:  manager.client,
-		next:    manager.client.getNextLink(headers),
+		NextURL: manager.client.getNextLink(headers),
 	}, nil
 }
 
@@ -257,7 +257,7 @@ func (manager ticketManager) UpdatedSinceAll(timeString string) (TicketResults, 
 	return TicketResults{
 		Results: output,
 		client:  manager.client,
-		next:    manager.client.getNextLink(headers),
+		NextURL: manager.client.getNextLink(headers),
 	}, nil
 }
 
@@ -320,17 +320,17 @@ func (manager ticketManager) Search(query querybuilder.Query) (TicketResults, er
 	return TicketResults{
 		Results: output,
 		client:  manager.client,
-		next:    manager.client.getNextLink(headers),
+		NextURL: manager.client.getNextLink(headers),
 	}, nil
 }
 
 func (results TicketResults) Next() (TicketResults, error) {
-	if results.next == "" {
+	if results.NextURL == "" {
 		return TicketResults{}, errors.New("no more tickets")
 	}
 	resp := RespTickets{}
 	output := TicketSlice{}
-	headers, err := results.client.get(results.next, &resp)
+	headers, err := results.client.get(results.NextURL, &resp)
 	if err != nil {
 		return TicketResults{}, err
 	}
@@ -339,7 +339,7 @@ func (results TicketResults) Next() (TicketResults, error) {
 	return TicketResults{
 		Results: output,
 		client:  results.client,
-		next:    results.client.getNextLink(headers),
+		NextURL: results.client.getNextLink(headers),
 	}, nil
 }
 
