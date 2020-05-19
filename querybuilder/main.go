@@ -9,12 +9,13 @@ type Query struct {
 	query url.Values
 }
 
+func BuildQuery() Query {
+	return Query{
+		query: url.Values{},
+	}
+}
 func (query Query) URLSafe() string {
 	return strings.Replace(query.query.Encode(), "+", "%20", -1)
-}
-
-type leftQuery struct {
-	leftPart string
 }
 
 func (query Query) Parameter(parameter string) {
