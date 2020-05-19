@@ -45,7 +45,7 @@ var endpoints = struct {
 		all:           "/api/v2/tickets",
 		create:        "/api/v2/tickets",
 		view:          func(id int64) string { return fmt.Sprintf("/api/v2/tickets/%d", id) },
-		search:        func(query string) string { return fmt.Sprintf("/api/v2/search/tickets?%s", query) },
+		search:        func(query string) string { return fmt.Sprintf("/api/v2/tickets?%s", query) },
 		reply:         func(id int64) string { return fmt.Sprintf("/api/v2/tickets/%d/reply", id) },
 		conversations: func(id int64) string { return fmt.Sprintf("/api/v2/tickets/%d/conversations", id) },
 		updatedSinceAll: func(timeString string) string {

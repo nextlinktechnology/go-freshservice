@@ -309,40 +309,18 @@ func (manager ticketManager) Reply(id int64, reply CreateConversation) (Conversa
 }
 
 func (manager ticketManager) Search(query querybuilder.Query) (TicketResults, error) {
-	output := struct {
-		Slice TicketSlice `json:"results"`
-		Total int         `json:"total"`
-	}{}
-	_, err := manager.client.get(endpoints.tickets.search(query.URLSafe()), &output)
+	resp := RespTickets{}
+	output := TicketSlice{}
+	headers, err := manager.client.get(endpoints.tickets.search(query.URLSafe()), &resp)
 	if err != nil {
 		return TicketResults{}, err
 	}
-
-	page := 1
-	for {
-		if len(output.Slice) >= output.Total || page == 10 {
-			break
-		}
-		page++
-		nextSlice := struct {
-			Slice TicketSlice `json:"results"`
-			Total int         `json:"total"`
-		}{}
-		_, err := manager.client.get(
-			fmt.Sprintf("%s&page=%d", endpoints.tickets.search(query.URLSafe()), page),
-			&nextSlice,
-		)
-		if err != nil {
-			break
-		}
-
-		output.Slice = append(output.Slice, nextSlice.Slice...)
-		output.Total = nextSlice.Total
-	}
+	output = append(output, resp.Tickets...)
 
 	return TicketResults{
-		Results: output.Slice,
+		Results: output,
 		client:  manager.client,
+		next:    manager.client.getNextLink(headers),
 	}, nil
 }
 
@@ -350,11 +328,14 @@ func (results TicketResults) Next() (TicketResults, error) {
 	if results.next == "" {
 		return TicketResults{}, errors.New("no more tickets")
 	}
+	resp := RespTickets{}
 	output := TicketSlice{}
-	headers, err := results.client.get(results.next, &output)
+	headers, err := results.client.get(results.next, &resp)
 	if err != nil {
 		return TicketResults{}, err
 	}
+	output = append(output, resp.Tickets...)
+
 	return TicketResults{
 		Results: output,
 		client:  results.client,
