@@ -58,7 +58,7 @@ type Ticket struct {
 	Name                   string                 `bson:"name" json:"name"`
 	Phone                  string                 `bson:"phone" json:"phone"`
 	Priority               int                    `bson:"priority" json:"priority"`
-	Category               int                    `bson:"category" json:"category"`
+	Category               string                 `bson:"category" json:"category"`
 	SubCategory            []string               `bson:"sub_category" json:"sub_category"`
 	ItemCategory           []string               `bson:"item_category" json:"item_category"`
 	ReplyCCEmails          []string               `bson:"reply_cc_emails" json:"reply_cc_emails"`
