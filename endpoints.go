@@ -25,10 +25,16 @@ type ticketEndpoints struct {
 	updatedSinceAll func(string) string
 }
 
+type servicerequestEndpoints struct {
+	create func(int64) string
+	view   func(int64) string
+}
+
 var endpoints = struct {
-	departments departmentEndpoints
-	requesters  requesterEndpoints
-	tickets     ticketEndpoints
+	departments    departmentEndpoints
+	requesters     requesterEndpoints
+	tickets        ticketEndpoints
+	servicerequest servicerequestEndpoints
 }{
 	departments: departmentEndpoints{
 		all:    "/api/v2/departments",
@@ -51,5 +57,9 @@ var endpoints = struct {
 		updatedSinceAll: func(timeString string) string {
 			return fmt.Sprintf("/api/v2/tickets?updated_since=%s", timeString)
 		},
+	},
+	servicerequest: servicerequestEndpoints{
+		create: func(id int64) string { return fmt.Sprintf("/api/v2/service_catalog/items/%d/place_request", id) },
+		view:   func(id int64) string { return fmt.Sprintf("/api/v2/tickets/%d/requested_items", id) },
 	},
 }

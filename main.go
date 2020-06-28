@@ -9,12 +9,13 @@ import (
 )
 
 type ApiClient struct {
-	domain      string
-	apiKey      string
-	logger      *log.Logger
-	Departments DepartmentManager
-	Requesters  RequesterManager
-	Tickets     TicketManager
+	domain          string
+	apiKey          string
+	logger          *log.Logger
+	Departments     DepartmentManager
+	Requesters      RequesterManager
+	Tickets         TicketManager
+	ServiceRequests ServiceRequestManager
 }
 
 type ClientOptions struct {
@@ -40,6 +41,7 @@ func Init(domain, apiKey string, options *ClientOptions) ApiClient {
 	client.Departments = newDepartmentManager(&client)
 	client.Tickets = newTicketManager(&client)
 	client.Requesters = newrequesterManager(&client)
+	client.ServiceRequests = newServiceRequestManager(&client)
 	return client
 }
 
