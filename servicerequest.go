@@ -8,7 +8,7 @@ import (
 
 type ServiceRequestManager interface {
 	Create(CreateTicket) (Ticket, error)
-	View(int64) (Ticket, error)
+	View(int64) (ServiceRequest, error)
 }
 
 type serviceRequestManager struct {
@@ -74,12 +74,12 @@ func (manager serviceRequestManager) Create(ticket CreateTicket) (Ticket, error)
 	return output.Ticket, nil
 }
 
-func (manager serviceRequestManager) View(id int64) (Ticket, error) {
-	output := RespTicket{}
+func (manager serviceRequestManager) View(id int64) (ServiceRequest, error) {
+	output := RespServiceRequests{}
 	_, err := manager.client.get(endpoints.servicerequest.view(id), &output)
 	if err != nil {
-		return Ticket{}, err
+		return ServiceRequest{}, err
 	}
 
-	return output.Ticket, nil
+	return output.ServiceRequests[0], nil
 }
